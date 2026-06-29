@@ -1,0 +1,29 @@
+{
+	"schemaVersion": 1,
+	"id": "minecraft_mods",
+	"version": "${version}",
+	"name": "Minecraft Mods",
+	"description": "A collection of Minecraft Java Edition mods.",
+	"authors": [
+		"alicon"
+	],
+	"contact": {
+		"sources": "https://github.com/alicon/minecraft-mods"
+	},
+	"license": "All-Rights-Reserved",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"dev.alicon.minecraftmods.MinecraftMods"
+		],
+		"client": [
+			"dev.alicon.minecraftmods.client.MinecraftModsClient"
+		]
+	},
+	"depends": {
+		"fabricloader": ">=0.19.3",
+		"minecraft": "~1.21.11",
+		"java": ">=21",
+		"fabric-api": "*"
+	}
+}

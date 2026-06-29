@@ -1,0 +1,9 @@
+{
+	"key.category.minecraft_mods.controls": "Minecraft Mods",
+	"key.minecraft_mods.teleport_to_player": "Teleport to Next Player",
+	"message.minecraft_mods.arrived": "%s teleported to you",
+	"message.minecraft_mods.no_players": "No other players are online",
+	"message.minecraft_mods.server_required": "Teleport requires Minecraft Mods on the server",
+	"message.minecraft_mods.teleport_cooldown": "Teleport is cooling down",
+	"message.minecraft_mods.teleported": "Teleported to %s"
+}
