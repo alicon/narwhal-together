@@ -18,6 +18,7 @@ case "$mod" in
 		license_url="https://github.com/alicon/narwhal-together/blob/main/LICENSE"
 		source_url="https://github.com/alicon/narwhal-together"
 		issues_url="https://github.com/alicon/narwhal-together/issues"
+		stale_gallery_titles=()
 		gallery_specs=(
 			"Playing Together|docs/media/narwhal-together-banner.png|Three young adventurers regroup beneath the NARwhal Together mascot.|true|0"
 		)
@@ -33,11 +34,14 @@ case "$mod" in
 		license_url="https://github.com/alicon/minecraft-mods/blob/main/LICENSE"
 		source_url="https://github.com/alicon/minecraft-mods"
 		issues_url="https://github.com/alicon/minecraft-mods/issues"
+		stale_gallery_titles=(
+			"Big Feelings About Cows"
+			"Big feelings about Sheep!"
+		)
 		gallery_specs=(
 			"Mushroom Wants a Treat|docs/media/mushroom-the-yorkie-banner.png|Mushroom watches for a treat beside the bed.|true|0"
 			"Curled Up Indoors|docs/media/mushroom-the-yorkie-sleeping.png|At night indoors, Mushroom curls up and closes his eyes.|false|1"
-			"Big Feelings About Cows|docs/media/mushroom-the-yorkie-mob-chase.png|Mushroom can bark at and chase peaceful mobs until called off with a treat.|false|2"
-			"Adventure Companion|docs/media/mushroom-the-yorkie-adventure.png|A small companion for big family worlds.|false|3"
+			"Adventure Companion|docs/media/mushroom-the-yorkie-adventure.png|A small companion for big family worlds.|false|2"
 		)
 		;;
 	*)
@@ -133,6 +137,19 @@ curl --fail-with-body --silent --show-error \
 urlencode() {
 	jq -nr --arg value "$1" '$value|@uri'
 }
+
+for stale_title in "${stale_gallery_titles[@]}"; do
+	while IFS= read -r stale_url; do
+		if [[ -z "$stale_url" ]]; then
+			continue
+		fi
+		curl --fail-with-body --silent --show-error \
+			--request DELETE \
+			--header "$auth_header" \
+			--header "User-Agent: $user_agent" \
+			"$api/gallery?url=$(urlencode "$stale_url")"
+	done < <(jq -r --arg title "$stale_title" '.gallery[]? | select(.title == $title) | .url' <<<"$project_json")
+done
 
 for spec in "${gallery_specs[@]}"; do
 	IFS='|' read -r gallery_title gallery_file gallery_description featured ordering <<<"$spec"

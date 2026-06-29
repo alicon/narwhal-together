@@ -8,6 +8,7 @@ def displayName = project.ext.mod_display_name
 def modrinthProjectEnv = project.ext.modrinth_project_env
 def modrinthProjectFallback = project.ext.modrinth_project_fallback
 def optionalModrinthProjects = project.ext.modrinth_optional_projects
+def changelogFile = rootProject.file("docs/release-notes/${project.name}/${project.mod_version}.md")
 
 version = project.mod_version
 group = project.maven_group
@@ -51,6 +52,9 @@ modrinth {
 	uploadFile = remapJar
 	gameVersions = [project.minecraft_version]
 	loaders = ["fabric"]
+	if (changelogFile.exists()) {
+		changelog = changelogFile.text
+	}
 
 	dependencies {
 		required.project "fabric-api"
