@@ -1,4 +1,4 @@
-package dev.alicon.minecraftmods;
+package dev.alicon.narwhaltogether;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
@@ -7,8 +7,8 @@ import net.minecraft.resources.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class MinecraftMods implements ModInitializer {
-	public static final String MOD_ID = "minecraft_mods";
+public final class NarwhalTogether implements ModInitializer {
+	public static final String MOD_ID = "narwhal_together";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
 	@Override
@@ -22,7 +22,7 @@ public final class MinecraftMods implements ModInitializer {
 				(payload, context) -> PlayerTeleporter.teleportToNextPlayer(context.player())
 		);
 
-		LOGGER.info("Minecraft Mods initialized");
+		LOGGER.info("NARwhal Together initialized");
 	}
 
 	public static Identifier id(String path) {

@@ -1,7 +1,7 @@
-package dev.alicon.minecraftmods.client;
+package dev.alicon.narwhaltogether.client;
 
-import dev.alicon.minecraftmods.MinecraftMods;
-import dev.alicon.minecraftmods.TeleportToNextPlayerPayload;
+import dev.alicon.narwhaltogether.NarwhalTogether;
+import dev.alicon.narwhaltogether.TeleportToNextPlayerPayload;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
@@ -11,11 +11,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import org.lwjgl.glfw.GLFW;
 
-public final class MinecraftModsClient implements ClientModInitializer {
+public final class NarwhalTogetherClient implements ClientModInitializer {
 	private static final KeyMapping.Category CONTROLS_CATEGORY =
-			KeyMapping.Category.register(MinecraftMods.id("controls"));
+			KeyMapping.Category.register(NarwhalTogether.id("controls"));
 	private static final KeyMapping TELEPORT_TO_PLAYER = KeyBindingHelper.registerKeyBinding(new KeyMapping(
-			"key.minecraft_mods.teleport_to_player",
+			"key.narwhal_together.teleport_to_player",
 			GLFW.GLFW_KEY_G,
 			CONTROLS_CATEGORY
 	));
@@ -36,7 +36,7 @@ public final class MinecraftModsClient implements ClientModInitializer {
 
 		if (!ClientPlayNetworking.canSend(TeleportToNextPlayerPayload.TYPE)) {
 			client.player.displayClientMessage(
-					Component.translatable("message.minecraft_mods.server_required"),
+					Component.translatable("message.narwhal_together.server_required"),
 					true
 			);
 			return;

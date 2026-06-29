@@ -1,0 +1,9 @@
+{
+	"key.category.narwhal_together.controls": "NARwhal Together",
+	"key.narwhal_together.teleport_to_player": "Teleport to Next Player",
+	"message.narwhal_together.arrived": "%s teleported to you",
+	"message.narwhal_together.no_players": "No other players are online",
+	"message.narwhal_together.server_required": "NARwhal Together must also be installed on the server",
+	"message.narwhal_together.teleport_cooldown": "Teleport is cooling down",
+	"message.narwhal_together.teleported": "Teleported to %s"
+}

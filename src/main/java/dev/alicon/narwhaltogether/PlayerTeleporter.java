@@ -1,4 +1,4 @@
-package dev.alicon.minecraftmods;
+package dev.alicon.narwhaltogether;
 
 import java.util.Comparator;
 import java.util.HashMap;
@@ -23,7 +23,7 @@ final class PlayerTeleporter {
 		long lastTick = LAST_TELEPORT_TICK.getOrDefault(player.getUUID(), Long.MIN_VALUE / 2);
 
 		if (currentTick - lastTick < COOLDOWN_TICKS) {
-			player.displayClientMessage(Component.translatable("message.minecraft_mods.teleport_cooldown"), true);
+			player.displayClientMessage(Component.translatable("message.narwhal_together.teleport_cooldown"), true);
 			return;
 		}
 
@@ -34,7 +34,7 @@ final class PlayerTeleporter {
 				.toList();
 
 		if (targets.isEmpty()) {
-			player.displayClientMessage(Component.translatable("message.minecraft_mods.no_players"), true);
+			player.displayClientMessage(Component.translatable("message.narwhal_together.no_players"), true);
 			return;
 		}
 
@@ -55,11 +55,11 @@ final class PlayerTeleporter {
 		LAST_TELEPORT_TICK.put(player.getUUID(), currentTick);
 		LAST_TARGET.put(player.getUUID(), target.getUUID());
 		player.displayClientMessage(
-				Component.translatable("message.minecraft_mods.teleported", target.getDisplayName()),
+				Component.translatable("message.narwhal_together.teleported", target.getDisplayName()),
 				true
 		);
 		target.displayClientMessage(
-				Component.translatable("message.minecraft_mods.arrived", player.getDisplayName()),
+				Component.translatable("message.narwhal_together.arrived", player.getDisplayName()),
 				true
 		);
 	}
