@@ -28,7 +28,7 @@ case "$mod" in
 		body_file="docs/MODRINTH_MUSHROOM.md"
 		icon_file="mods/mushroom-the-yorkie/src/main/resources/assets/mushroom_yorkie/icon.png"
 		title="Mushroom the Yorkie"
-		description="A tiny Yorkie companion with treats, naps, bathroom barks, and sheep-chasing opinions."
+		description="A tiny Yorkie companion with treats, naps, bathroom barks, sheep-chasing opinions, and tiny barrel rolls."
 		categories='["mobs", "game-mechanics"]'
 		license_url="https://github.com/alicon/minecraft-mods/blob/main/LICENSE"
 		source_url="https://github.com/alicon/minecraft-mods"

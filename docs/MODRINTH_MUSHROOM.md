@@ -2,7 +2,7 @@
 
 **A tiny Yorkie companion with big feelings.**
 
-Mushroom the Yorkie adds one small, loyal dog companion to your Minecraft world. He follows his owner, takes treats, naps indoors at night, asks to go outside, and occasionally gets very invested in nearby peaceful animals.
+Mushroom the Yorkie adds one small, loyal dog companion to your Minecraft world. He follows his owner, takes treats, naps indoors at night, asks to go outside, does loop-de-loops and barrel rolls when flying with you, and occasionally gets very invested in nearby peaceful animals.
 
 ## Current Features
 
@@ -13,7 +13,8 @@ Mushroom the Yorkie adds one small, loyal dog companion to your Minecraft world.
 - At night indoors, Mushroom curls up to sleep with closed eyes.
 - Double-click a sleeping Mushroom to wake him briefly before he settles back down.
 - Mushroom can bark at and chase peaceful mobs, but holding a treat calls him off for the rest of the Minecraft day.
-- Creative flying support lets Mushroom trail along with playful flying tricks.
+- Creative flying support lets Mushroom trail along with loop-de-loops and barrel rolls.
+- Be careful not to drop too fast while flying. Land gently, or little Mushroom can get injured.
 
 ## Configuration
 
