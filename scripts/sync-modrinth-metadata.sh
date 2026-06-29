@@ -84,13 +84,24 @@ if [[ "$project_status" == "404" ]]; then
 	create_metadata="$(jq -c '. + {slug: $slug, project_type: "mod", requested_status: "draft"}' \
 		--arg slug "$project_id" \
 		<<<"$metadata")"
-	curl --fail-with-body --silent --show-error \
+	create_metadata_file="$(mktemp)"
+	printf '%s' "$create_metadata" >"$create_metadata_file"
+	create_response="$(curl --silent --show-error \
+		--write-out '\n%{http_code}' \
 		--request POST \
 		--header "$auth_header" \
 		--header "User-Agent: $user_agent" \
-		--form "data=${create_metadata};type=application/json" \
+		--form "data=@${create_metadata_file};type=application/json" \
 		--form "icon=@${icon_file}" \
-		"https://api.modrinth.com/v2/project" >/dev/null
+		"https://api.modrinth.com/v2/project")"
+	rm -f "$create_metadata_file"
+	create_status="$(tail -n 1 <<<"$create_response")"
+	create_body="$(sed '$d' <<<"$create_response")"
+	if [[ ! "$create_status" =~ ^2 ]]; then
+		echo "$create_body" >&2
+		echo "Failed to create Modrinth project $project_id; HTTP $create_status" >&2
+		exit 1
+	fi
 	project_json="$(curl --fail-with-body --silent --show-error \
 		--header "$auth_header" \
 		--header "User-Agent: $user_agent" \
