@@ -81,7 +81,7 @@ project_status="$(tail -n 1 <<<"$project_json")"
 project_body="$(sed '$d' <<<"$project_json")"
 
 if [[ "$project_status" == "404" ]]; then
-	create_metadata="$(jq -c '. + {slug: $slug, project_type: "mod", requested_status: "draft"}' \
+	create_metadata="$(jq -c '. + {slug: $slug, project_type: "mod", requested_status: "draft", is_draft: true, initial_versions: [], gallery_items: []}' \
 		--arg slug "$project_id" \
 		<<<"$metadata")"
 	create_metadata_file="$(mktemp)"
