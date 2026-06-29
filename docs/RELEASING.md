@@ -29,6 +29,8 @@ After the Modrinth project exists:
 
 Never commit the token.
 
+Run **Sync Modrinth Metadata** from the repository's Actions tab whenever the name, description, license, links, icon, or gallery material changes. The workflow leaves the project's review status unchanged.
+
 ## Publish
 
 1. Complete `docs/TESTING.md` using the exact JAR being released.
