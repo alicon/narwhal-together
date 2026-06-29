@@ -72,6 +72,37 @@ metadata="$({
 		}'
 })"
 
+project_json="$(curl --silent --show-error \
+	--write-out '\n%{http_code}' \
+	--header "$auth_header" \
+	--header "User-Agent: $user_agent" \
+	"$api")"
+project_status="$(tail -n 1 <<<"$project_json")"
+project_body="$(sed '$d' <<<"$project_json")"
+
+if [[ "$project_status" == "404" ]]; then
+	create_metadata="$(jq -c '. + {slug: $slug, project_type: "mod", requested_status: "draft"}' \
+		--arg slug "$project_id" \
+		<<<"$metadata")"
+	curl --fail-with-body --silent --show-error \
+		--request POST \
+		--header "$auth_header" \
+		--header "User-Agent: $user_agent" \
+		--form "data=${create_metadata};type=application/json" \
+		--form "icon=@${icon_file}" \
+		"https://api.modrinth.com/v2/project" >/dev/null
+	project_json="$(curl --fail-with-body --silent --show-error \
+		--header "$auth_header" \
+		--header "User-Agent: $user_agent" \
+		"$api")"
+elif [[ "$project_status" =~ ^2 ]]; then
+	project_json="$project_body"
+else
+	echo "$project_body" >&2
+	echo "Failed to load Modrinth project $project_id; HTTP $project_status" >&2
+	exit 1
+fi
+
 curl --fail-with-body --silent --show-error \
 	--request PATCH \
 	--header "$auth_header" \
@@ -87,11 +118,6 @@ curl --fail-with-body --silent --show-error \
 	--header "Content-Type: image/png" \
 	--data-binary @"$icon_file" \
 	"$api/icon?ext=png"
-
-project_json="$(curl --fail-with-body --silent --show-error \
-	--header "$auth_header" \
-	--header "User-Agent: $user_agent" \
-	"$api")"
 
 urlencode() {
 	jq -nr --arg value "$1" '$value|@uri'
