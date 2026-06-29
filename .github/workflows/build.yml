@@ -27,9 +27,11 @@ jobs:
       - name: Build
         run: ./gradlew build --no-daemon
 
-      - name: Upload mod JAR
+      - name: Upload mod JARs
         uses: actions/upload-artifact@v7
         with:
-          name: narwhal-together
-          path: build/libs/narwhal-together-*.jar
+          name: minecraft-mods
+          path: |
+            build/mods/*/libs/*.jar
+            !build/mods/*/libs/*-sources.jar
           if-no-files-found: error

@@ -1,0 +1,41 @@
+name: Playtest feedback
+description: Share notes after trying a mod in Minecraft.
+title: "[Playtest]: "
+labels:
+  - playtest
+body:
+  - type: dropdown
+    id: mod
+    attributes:
+      label: Mod
+      options:
+        - NARwhal Together
+        - Mushroom the Yorkie
+        - Multiple mods
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version or jar name
+      placeholder: "mushroom-the-yorkie-0.1.0.jar"
+  - type: textarea
+    id: worked
+    attributes:
+      label: What worked well?
+      description: Note anything that felt clear, fun, or reliable.
+  - type: textarea
+    id: confusing
+    attributes:
+      label: What was confusing or annoying?
+      description: Include anything that interrupted play.
+  - type: textarea
+    id: feel
+    attributes:
+      label: How did it feel?
+      description: For kid-friendly mods, feel matters. Was it cute, funny, useful, too much, too subtle?
+  - type: textarea
+    id: bugs
+    attributes:
+      label: Bugs or rough edges
+      description: Include steps, logs, or screenshots if you have them.

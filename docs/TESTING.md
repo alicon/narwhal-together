@@ -1,34 +1,129 @@
-# Multiplayer test checklist
+# Testing
 
-Run this checklist with disposable test worlds before each public release.
+Use automated CLI checks first, then do a short manual pass for visuals, feel, and multiplayer behavior that cannot be proven cheaply from tests.
 
-## Setup
+## Automated CLI Checks
+
+Run all verification:
+
+```shell
+./gradlew check
+```
+
+This runs:
+
+- root `validateModLayout`
+- root `validateFormatting`
+- root `validateJavaFileSizes`
+- root `validateNoClientImportsInMain`
+- root `validatePublicApiDocs`
+- per-mod Javadoc generation
+- JVM unit tests for every mod subproject
+- normal Gradle/Fabric check tasks
+
+Run one mod's tests:
+
+```shell
+./gradlew :narwhal-together:test
+./gradlew :mushroom-the-yorkie:test
+```
+
+Build all jars:
+
+```shell
+./gradlew build
+```
+
+Production jars are written to:
+
+```text
+build/mods/narwhal-together/libs/narwhal-together-<version>.jar
+build/mods/mushroom-the-yorkie/libs/mushroom-the-yorkie-<version>.jar
+```
+
+Run Mushroom's headless Minecraft GameTests:
+
+```shell
+./gradlew :mushroom-the-yorkie:runGameTestServer
+```
+
+GameTests boot a scripted Minecraft server from the CLI. They are slower than unit tests, so keep them focused on behavior that needs a real world, entity registry, or server tick loop.
+
+## Current Automated Coverage
+
+NARwhal Together:
+
+- target cycling selects the first target when no previous target exists
+- target cycling advances to the next target
+- target cycling wraps back to the first target
+- target cycling recovers when the previous target left the game
+- empty target lists are rejected
+
+Mushroom the Yorkie:
+
+- default pet needs
+- save/load value clamping
+- treat effects
+- indoor need ticking
+- hungry potty acceleration
+- sitting energy behavior
+- outside potty drain and mood boost
+- indoor potty warning mood penalty
+- wake-up spawn policy for respawn and extreme modes
+- spawn-mode config parsing defaults
+- headless GameTest verifies Mushroom's custom entity can spawn in a Minecraft test world
+
+Root layout validation:
+
+- root `src/` does not exist
+- every mod has `src/main/java`
+- every mod has `src/client/java`
+- every mod has `src/main/resources/fabric.mod.json`
+- Gradle `mod_id` matches `fabric.mod.json`
+- mod IDs are unique
+- declared icons exist
+- declared entrypoint classes exist
+- duplicate translation keys are rejected
+- non-Minecraft item model textures must exist
+
+Quality gates:
+
+- source text cannot have CRLF line endings, trailing whitespace, or missing final newlines
+- Java files warn over 300 lines and fail over 500 lines
+- common/server source cannot import client-only classes
+- public declarations need Javadocs unless they override Minecraft/Fabric APIs
+- Javadocs must generate successfully
+
+Good future GameTests:
+
+- Mushroom spawn egg creates the custom entity
+- Yorkie treat tames Mushroom
+- owner can toggle sit/follow
+- non-owner cannot command Mushroom
+- NARwhal payload registration does not fail on startup
+
+## Manual Acceptance Checks
+
+NARwhal Together:
 
 - [ ] Minecraft 1.21.11 launches with Fabric API and NARwhal Together.
 - [ ] The server or LAN host has the same NARwhal Together JAR as every client.
-- [ ] Controlify detects each controller and displays the teleport action.
-- [ ] The teleport action can be assigned to a controller button or radial-menu slot.
-
-## Teleport behavior
-
-- [ ] With one player online, pressing the action shows `No other players are online`.
 - [ ] With two players online, each player can teleport to the other.
-- [ ] Teleporting works in both directions without operator permissions.
+- [ ] Teleporting works without operator permissions.
 - [ ] Teleporting between the Overworld, Nether, and End works.
-- [ ] The arriving player appears at the target player's position and does not retain fall damage.
-- [ ] The target player sees an arrival message.
-- [ ] Repeated presses during the two-second cooldown do not teleport again.
-
-## Three or more players
-
-- [ ] Repeated uses cycle through the other players alphabetically.
+- [ ] Repeated uses cycle through three or more players alphabetically.
 - [ ] Spectators are skipped.
-- [ ] A player leaving during play does not break the next teleport.
-
-## Compatibility and failure behavior
-
-- [ ] A client connecting to a server without the mod gets a clear message when using the action.
-- [ ] Keyboard `G` and the configured controller action both work.
-- [ ] Existing `G` key conflicts are visible and can be rebound in Controls.
-- [ ] Split-screen instances can use the action independently.
 - [ ] No errors attributed to `narwhal_together` appear in the latest log.
+
+Mushroom the Yorkie:
+
+- [ ] Minecraft 1.21.11 launches with Fabric API and Mushroom the Yorkie.
+- [ ] The Mushroom spawn egg creates a small Yorkie entity.
+- [ ] Mushroom renders with pointy ears and no missing texture.
+- [ ] Yorkie treats tame and feed Mushroom.
+- [ ] Cooked chicken + cooked beef + bone crafts 8 Yorkie Treats.
+- [ ] Creative inventory has a Mushroom the Yorkie tab.
+- [ ] After a successful night in a bed, Mushroom appears near the bed already tamed.
+- [ ] Empty-hand owner interaction toggles sit/follow.
+- [ ] Mushroom follows closely enough to feel like a tiny companion.
+- [ ] No errors attributed to `mushroom_yorkie` appear in the latest log.

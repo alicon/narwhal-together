@@ -1,0 +1,112 @@
+apply plugin: 'net.fabricmc.fabric-loom-remap'
+apply plugin: 'maven-publish'
+apply plugin: 'com.modrinth.minotaur'
+
+def modId = project.ext.mod_id
+def archiveName = project.ext.mod_archive_name
+def displayName = project.ext.mod_display_name
+def modrinthProjectEnv = project.ext.modrinth_project_env
+def modrinthProjectFallback = project.ext.modrinth_project_fallback
+def optionalModrinthProjects = project.ext.modrinth_optional_projects
+
+version = project.mod_version
+group = project.maven_group
+
+layout.buildDirectory = rootProject.layout.buildDirectory.dir("mods/${project.name}")
+
+base {
+	archivesName = archiveName
+}
+
+loom {
+	splitEnvironmentSourceSets()
+
+	mods {
+		"${modId}" {
+			sourceSet sourceSets.main
+			sourceSet sourceSets.client
+		}
+	}
+
+	if (project.ext.has('enable_game_tests') && project.ext.enable_game_tests) {
+		runs {
+			gameTestServer {
+				server()
+				name = "${displayName} GameTest Server"
+				runDir = "build/gametest"
+				vmArg "-Dfabric-api.gametest=true"
+				vmArg "-Dfabric-api.gametest.report-file=${project.layout.buildDirectory.get().asFile}/reports/gametest/results.xml"
+				programArg "--nogui"
+			}
+		}
+	}
+}
+
+modrinth {
+	token = System.getenv("MODRINTH_TOKEN")
+	projectId = System.getenv(modrinthProjectEnv) ?: modrinthProjectFallback
+	versionNumber = project.version
+	versionName = "${displayName} ${project.version} for Minecraft ${project.minecraft_version}"
+	versionType = System.getenv("MODRINTH_VERSION_TYPE") ?: "alpha"
+	uploadFile = remapJar
+	gameVersions = [project.minecraft_version]
+	loaders = ["fabric"]
+
+	dependencies {
+		required.project "fabric-api"
+		optionalModrinthProjects.each { optionalProject ->
+			optional.project optionalProject
+		}
+	}
+}
+
+dependencies {
+	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	mappings loom.officialMojangMappings()
+	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+
+	testImplementation platform("org.junit:junit-bom:${project.junit_version}")
+	testImplementation "org.junit.jupiter:junit-jupiter"
+	testRuntimeOnly "org.junit.platform:junit-platform-launcher"
+}
+
+processResources {
+	inputs.property "version", project.version
+
+	filesMatching("fabric.mod.json") {
+		expand "version": project.version
+	}
+}
+
+tasks.withType(JavaCompile).configureEach {
+	options.release = 21
+}
+
+tasks.withType(Test).configureEach {
+	useJUnitPlatform()
+}
+
+tasks.withType(Javadoc).configureEach {
+	failOnError = true
+	options.encoding = 'UTF-8'
+	options.addStringOption('Xdoclint:reference,syntax', '-quiet')
+}
+
+tasks.named('check') {
+	dependsOn tasks.named('javadoc')
+}
+
+java {
+	withSourcesJar()
+	sourceCompatibility = JavaVersion.VERSION_21
+	targetCompatibility = JavaVersion.VERSION_21
+}
+
+publishing {
+	publications {
+		create("mavenJava", MavenPublication) {
+			from components.java
+		}
+	}
+}

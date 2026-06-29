@@ -1,23 +1,25 @@
-# NARwhal Together
+# Minecraft Mods
 
-![Three young adventurers regroup beneath the NARwhal Together mascot](docs/media/narwhal-together-banner.png)
+Fabric mod workspace for small Minecraft projects.
 
-**Little tools for big Minecraft adventures together.**
+## Mods
 
-NARwhal Together is a family-focused Fabric mod that makes local and online multiplayer easier for young players. The name comes from Noelle, Aoife, and Rufus—the three original adventurers—and the project is designed around helping kids stay together and spend less time fighting menus.
+- **NARwhal Together**: family-focused multiplayer helpers. Current feature: press `G` to teleport to the next online player.
+- **Mushroom the Yorkie**: a tiny pointy-eared Yorkie companion with pet needs, treats, tame/follow/sit behavior, and early trick hooks.
 
-<img src="src/main/resources/assets/narwhal_together/icon.png" alt="NARwhal Together mascot" width="160">
+## Layout
 
-## Teleport to Next Player
+```text
+mods/
+  narwhal-together/
+    src/
+  mushroom-the-yorkie/
+    src/
+gradle/
+  fabric-mod.gradle
+```
 
-Press `G` to teleport to another online player.
-
-- With one other player online, the action teleports directly to them.
-- With several players online, repeated presses cycle through them alphabetically.
-- A two-second cooldown prevents accidental repeated teleports.
-- Players do not need operator permissions.
-
-Controller players can bind **Teleport to Next Player** in their controller settings. [Controlify](https://modrinth.com/mod/controlify) can also place the action on its radial menu.
+Each mod has its own `fabric.mod.json`, Java package, assets, and jar. Shared Fabric/Loom/Modrinth build setup lives in `gradle/fabric-mod.gradle`.
 
 ## Requirements
 
@@ -25,16 +27,6 @@ Controller players can bind **Teleport to Next Player** in their controller sett
 - Fabric Loader 0.19.3 or newer
 - Fabric API
 - Java 21 or newer
-- The mod installed on every participating client and on the server or LAN host
-
-Controlify is optional but recommended for controller play.
-
-## Installation
-
-1. Install Fabric Loader and Fabric API in the Minecraft 1.21.11 profile.
-2. Copy the NARwhal Together JAR into the profile's `mods` directory.
-3. Install the same JAR on the server or LAN host.
-4. Start Minecraft and assign **Teleport to Next Player** to a controller button or radial-menu slot if desired.
 
 ## Build
 
@@ -42,14 +34,52 @@ Controlify is optional but recommended for controller play.
 ./gradlew build
 ```
 
-The distributable JAR is written to `build/libs/`.
+Distributable jars are written symmetrically:
 
-## Testing and releases
+```text
+build/mods/narwhal-together/libs/narwhal-together-<version>.jar
+build/mods/mushroom-the-yorkie/libs/mushroom-the-yorkie-<version>.jar
+```
 
-- Follow [the multiplayer test checklist](docs/TESTING.md) before publishing.
-- See [the release guide](docs/RELEASING.md) for GitHub and Modrinth setup.
-- The Modrinth-ready project description is in [docs/MODRINTH.md](docs/MODRINTH.md).
+## Verification
+
+```shell
+./gradlew check
+```
+
+This runs unit tests plus repo quality gates for layout, metadata, formatting, file size, forbidden client imports, public API docs, and Javadocs.
+
+## Per-Mod Builds
+
+```shell
+./gradlew :narwhal-together:build
+./gradlew :mushroom-the-yorkie:build
+```
+
+## Mushroom Config
+
+Mushroom the Yorkie writes a config file at first launch:
+
+```text
+config/mushroom_yorkie.json
+```
+
+The main option is `wakeUpSpawnMode`:
+
+- `respawn`: after a successful night in bed, a player gets Mushroom if they do not already have a loaded owned Mushroom.
+- `extreme`: each player gets Mushroom only once after sleeping; if he dies, that player does not get another one.
+
+## Engineering Standards
+
+This repo prioritizes maintainability: shared configuration, reusable domain logic, separation of concerns, documented public APIs, and automated tests before manual testing. See [Engineering Principles](docs/ENGINEERING.md).
+
+Helpful process docs:
+
+- [Testing](docs/TESTING.md)
+- [Compatibility Policy](docs/COMPATIBILITY.md)
+- [Reference Codebases](docs/REFERENCE_CODEBASES.md)
+- [Release Guide](docs/RELEASING.md)
 
 ## License
 
-NARwhal Together is available under the [MIT License](LICENSE).
+These mods are available under the [MIT License](LICENSE).

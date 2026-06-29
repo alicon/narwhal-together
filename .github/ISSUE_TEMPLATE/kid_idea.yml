@@ -1,0 +1,41 @@
+name: Kid-friendly idea
+description: Suggest a playful Minecraft idea for family play.
+title: "[Idea]: "
+labels:
+  - idea
+body:
+  - type: dropdown
+    id: mod
+    attributes:
+      label: Mod
+      options:
+        - NARwhal Together
+        - Mushroom the Yorkie
+        - New mod idea
+        - Not sure
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: What should happen?
+      description: Describe the idea in plain language.
+    validations:
+      required: true
+  - type: textarea
+    id: fun
+    attributes:
+      label: What makes it fun, cute, or funny?
+      description: Capture the kid-friendly part of the idea.
+    validations:
+      required: true
+  - type: textarea
+    id: success
+    attributes:
+      label: How would we know it worked?
+      description: Describe what a player should see, hear, or be able to do.
+  - type: textarea
+    id: notes
+    attributes:
+      label: Extra notes
+      description: Any sketches, examples, or related ideas.

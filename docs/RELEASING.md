@@ -1,8 +1,8 @@
 # Release guide
 
-## Create the Modrinth project
+## Create the Modrinth projects
 
-Create a Modrinth **Mod** project with these values:
+Create a Modrinth **Mod** project for NARwhal Together with these values:
 
 - Name: `NARwhal Together`
 - Suggested slug: `narwhal-together`
@@ -16,7 +16,27 @@ Create a Modrinth **Mod** project with these values:
 - Required dependency: `Fabric API`
 - Optional dependency: `Controlify`
 
-Use `src/main/resources/assets/narwhal_together/icon.png` as the project icon, `docs/media/narwhal-together-banner.png` as a gallery image, and `docs/MODRINTH.md` as the long description.
+Use `mods/narwhal-together/src/main/resources/assets/narwhal_together/icon.png` as the project icon, `docs/media/narwhal-together-banner.png` as a gallery image, and `docs/MODRINTH.md` as the long description.
+
+Create a Modrinth **Mod** project for Mushroom the Yorkie with these values:
+
+- Name: `Mushroom the Yorkie`
+- Suggested slug: `mushroom-the-yorkie`
+- Summary: `A tiny Yorkie companion with treats, naps, bathroom barks, and sheep-chasing opinions.`
+- License: `MIT`
+- Source: `https://github.com/alicon/narwhal-together`
+- Client environment: `Required`
+- Server environment: `Required`
+- Loader: `Fabric`
+- Game version: `1.21.11`
+- Required dependency: `Fabric API`
+
+Use `mods/mushroom-the-yorkie/src/main/resources/assets/mushroom_yorkie/icon.png` as the project icon, `docs/MODRINTH_MUSHROOM.md` as the long description, and these gallery images:
+
+- `docs/media/mushroom-the-yorkie-banner.png`
+- `docs/media/mushroom-the-yorkie-sleeping.png`
+- `docs/media/mushroom-the-yorkie-mob-chase.png`
+- `docs/media/mushroom-the-yorkie-adventure.png`
 
 ## Configure publishing
 
@@ -25,11 +45,12 @@ After the Modrinth project exists:
 1. Create a Modrinth personal access token with version publishing permission.
 2. In GitHub, open **Settings → Secrets and variables → Actions**.
 3. Add a repository secret named `MODRINTH_TOKEN`.
-4. Add a repository variable named `MODRINTH_PROJECT_ID` containing the project ID or slug.
+4. Add a repository variable named `MODRINTH_PROJECT_ID` containing the NARwhal project ID or slug.
+5. Add a repository variable named `MUSHROOM_MODRINTH_PROJECT_ID` containing the Mushroom project ID or slug. If this is omitted, the workflows use the slug `mushroom-the-yorkie`.
 
 Never commit the token.
 
-Run **Sync Modrinth Metadata** from the repository's Actions tab whenever the name, description, license, links, icon, or gallery material changes. The workflow leaves the project's review status unchanged.
+Run **Sync Modrinth Metadata** from the repository's Actions tab whenever the name, description, license, links, icon, or gallery material changes. Select the mod to sync from the workflow input. The workflow leaves the project's review status unchanged.
 
 ## Publish
 
@@ -37,6 +58,6 @@ Run **Sync Modrinth Metadata** from the repository's Actions tab whenever the na
 2. Update `mod_version` in `gradle.properties`.
 3. Commit and push the release changes.
 4. Open the repository's **Actions** tab.
-5. Run **Publish to Modrinth** and select `alpha`, `beta`, or `release`.
+5. Run **Publish to Modrinth**, select the mod, and select `alpha`, `beta`, or `release`.
 
-The workflow rebuilds from the selected commit and uploads the remapped production JAR. The publishing task declares Fabric API as required and Controlify as optional.
+The workflow rebuilds from the selected commit and uploads the remapped production JAR. The publishing task declares Fabric API as required. NARwhal also declares Controlify as optional.

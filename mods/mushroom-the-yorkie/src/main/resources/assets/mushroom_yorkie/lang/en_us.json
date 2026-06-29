@@ -1,0 +1,11 @@
+{
+	"entity.mushroom_yorkie.mushroom_yorkie": "Mushroom",
+	"itemGroup.mushroom_yorkie.main": "Mushroom the Yorkie",
+	"item.mushroom_yorkie.mushroom_yorkie_spawn_egg": "Mushroom Spawn Egg",
+	"item.mushroom_yorkie.yorkie_treat": "Yorkie Treat",
+	"message.mushroom_yorkie.follow": "Mushroom is following you.",
+	"message.mushroom_yorkie.one_only": "You already have Mushroom.",
+	"message.mushroom_yorkie.sit": "Mushroom sits.",
+	"message.mushroom_yorkie.tamed": "Mushroom is your tiny best friend now.",
+	"message.mushroom_yorkie.woke_up": "Mushroom woke up at the foot of your bed."
+}

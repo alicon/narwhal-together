@@ -1,0 +1,13 @@
+{
+	"type": "minecraft:crafting_shapeless",
+	"category": "misc",
+	"ingredients": [
+		"minecraft:cooked_chicken",
+		"minecraft:cooked_beef",
+		"minecraft:bone"
+	],
+	"result": {
+		"count": 8,
+		"id": "mushroom_yorkie:yorkie_treat"
+	}
+}

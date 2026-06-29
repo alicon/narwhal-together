@@ -3,6 +3,14 @@ name: Publish to Modrinth
 on:
   workflow_dispatch:
     inputs:
+      mod:
+        description: Mod to publish
+        required: true
+        default: mushroom-the-yorkie
+        type: choice
+        options:
+          - mushroom-the-yorkie
+          - narwhal-together
       version_type:
         description: Modrinth release channel
         required: true
@@ -34,8 +42,9 @@ jobs:
         uses: gradle/actions/setup-gradle@v6
 
       - name: Build and publish
-        run: ./gradlew build modrinth --no-daemon
+        run: ./gradlew ":${{ inputs.mod }}:build" ":${{ inputs.mod }}:modrinth" --no-daemon
         env:
           MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
           MODRINTH_PROJECT_ID: ${{ vars.MODRINTH_PROJECT_ID }}
+          MUSHROOM_MODRINTH_PROJECT_ID: ${{ vars.MUSHROOM_MODRINTH_PROJECT_ID }}
           MODRINTH_VERSION_TYPE: ${{ inputs.version_type }}

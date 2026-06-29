@@ -2,6 +2,15 @@ name: Sync Modrinth Metadata
 
 on:
   workflow_dispatch:
+    inputs:
+      mod:
+        description: Mod metadata to sync
+        required: true
+        default: mushroom-the-yorkie
+        type: choice
+        options:
+          - mushroom-the-yorkie
+          - narwhal-together
 
 permissions:
   contents: read
@@ -19,3 +28,5 @@ jobs:
         env:
           MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
           MODRINTH_PROJECT_ID: ${{ vars.MODRINTH_PROJECT_ID }}
+          MUSHROOM_MODRINTH_PROJECT_ID: ${{ vars.MUSHROOM_MODRINTH_PROJECT_ID }}
+          MODRINTH_MOD: ${{ inputs.mod }}

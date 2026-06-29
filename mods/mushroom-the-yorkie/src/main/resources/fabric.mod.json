@@ -1,0 +1,32 @@
+{
+	"schemaVersion": 1,
+	"id": "mushroom_yorkie",
+	"version": "${version}",
+	"name": "Mushroom the Yorkie",
+	"description": "A tiny pointy-eared Yorkie companion with real pet needs and a big personality.",
+	"authors": [
+		"alicon"
+	],
+	"contact": {
+		"homepage": "https://github.com/alicon/minecraft-mods",
+		"sources": "https://github.com/alicon/minecraft-mods",
+		"issues": "https://github.com/alicon/minecraft-mods/issues"
+	},
+	"license": "MIT",
+	"icon": "assets/mushroom_yorkie/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"dev.alicon.mushroomyorkie.MushroomTheYorkie"
+		],
+		"client": [
+			"dev.alicon.mushroomyorkie.client.MushroomTheYorkieClient"
+		]
+	},
+	"depends": {
+		"fabricloader": ">=0.19.3",
+		"minecraft": "~1.21.11",
+		"java": ">=21",
+		"fabric-api": "*"
+	}
+}

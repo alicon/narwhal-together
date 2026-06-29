@@ -1,0 +1,175 @@
+# Engineering Principles
+
+This repository is a long-lived multi-mod workspace. The goal is not only to ship features, but to keep the codebase easy to understand, easy to change, and hard to accidentally break.
+
+## North Star
+
+Prefer clear, reusable, tested building blocks over one-off implementations. Do not copy and paste behavior when a shared helper, domain class, Gradle convention, or small abstraction can express the same idea cleanly.
+
+## Repository Structure
+
+- Keep each mod isolated under `mods/<mod-name>/`.
+- Keep shared build logic in `gradle/`, not duplicated across mod `build.gradle` files.
+- Keep root-level docs focused on the whole workspace.
+- Put mod-specific implementation, assets, metadata, tests, and docs under that mod's directory when they are not shared.
+- Do not let one mod depend on another mod's internal package unless that package is intentionally promoted to a shared module.
+
+## Code Reuse
+
+- Extract shared behavior before adding a second copy.
+- Reuse existing local helpers and patterns before introducing a new style.
+- Prefer pure Java domain classes for gameplay rules that can be tested without Minecraft.
+- Use generic helpers only when they are genuinely shared by multiple call sites.
+- Avoid premature abstractions for single-use code, but leave code shaped so extraction is easy when a second use appears.
+
+Good examples:
+
+- `gradle/fabric-mod.gradle` centralizes common Fabric/Loom/Modrinth setup.
+- `PetNeeds` keeps Mushroom's need math separate from Minecraft entity plumbing.
+- `TeleportTargetSelector` keeps NARwhal's target cycling separate from `ServerPlayer` behavior.
+
+## Configuration
+
+- Centralize shared versions in `gradle.properties`.
+- Centralize repeated build behavior in `gradle/fabric-mod.gradle`.
+- Give each mod only the configuration that is truly unique: mod id, display name, archive name, Modrinth project id, optional dependencies.
+- Do not hard-code repeated Minecraft, Fabric Loader, Fabric API, Java, or JUnit versions in subprojects.
+- Keep output paths symmetric across mods.
+
+## Separation Of Concerns
+
+Keep these responsibilities separate:
+
+- **Domain logic**: pure Java rules, deterministic and unit-testable.
+- **Minecraft integration**: entity classes, item classes, networking, registries, save/load adapters.
+- **Client rendering**: models, renderers, textures, animation state.
+- **Build/release logic**: Gradle convention scripts, workflows, release scripts.
+- **Documentation**: usage, testing, release process, engineering standards.
+
+Entity classes should mostly adapt Minecraft events to domain logic. If an entity class starts accumulating unrelated behavior, extract:
+
+- a state object
+- a behavior class
+- a selector/strategy
+- a save/load adapter
+- a renderer/model helper
+
+## Public API Documentation
+
+Document public APIs when they are intended for reuse outside their immediate class or package.
+
+Use Javadoc for:
+
+- public classes that represent reusable concepts
+- public methods with non-obvious contracts
+- public methods that mutate state
+- public methods where order, bounds, side effects, or threading matter
+- public constants whose values affect gameplay or compatibility
+
+Javadoc should explain the contract and reason, not restate the method name.
+
+Do not add noisy comments for obvious code. Prefer clear names and small methods.
+
+## File Size And Factoring
+
+- Keep files focused on one responsibility.
+- Treat 300 lines as a prompt to review structure.
+- Treat 500 lines as a strong signal to extract responsibilities before adding more.
+- `./gradlew check` warns above 300 lines and fails Java files above 500 lines.
+- Avoid classes with many unrelated private helpers.
+- Prefer several small cohesive classes over one large class with sections.
+
+When a file grows, ask:
+
+- Is there pure logic that can move out of Minecraft integration?
+- Is there save/load code that can be isolated?
+- Is there rendering or animation code mixed with gameplay state?
+- Is there repeated logic across mods?
+- Would tests be easier if this were split?
+
+## Testing
+
+Automated tests should be added at the lowest practical layer.
+
+Use plain JVM tests for:
+
+- math and state transitions
+- selectors and ordering
+- cooldown rules
+- permission checks
+- serialization helpers that do not need a world
+- config parsing
+
+Use Minecraft GameTest later for:
+
+- entity spawn behavior
+- item interactions
+- block behavior
+- registry-driven behavior
+- world interactions
+
+Use manual testing for:
+
+- visual quality
+- animation feel
+- audio feel
+- multiplayer feel
+- pathfinding quality
+
+Every bug fix should include a regression test unless the behavior is only visual/manual.
+
+## Automated Quality Gates
+
+`./gradlew check` enforces the baseline maintenance rules:
+
+- symmetric multi-mod layout and valid `fabric.mod.json` metadata
+- no stale root `src/` directory
+- unique mod ids
+- existing icons and entrypoint classes
+- duplicate translation-key detection
+- item model texture reference validation for local assets
+- no trailing whitespace, CRLF line endings, or missing final newlines
+- Java file-size warnings at 300 lines and failures above 500 lines
+- no client-only imports from common/server source
+- Javadocs for public declarations that are not overrides
+- successful per-mod Javadoc generation
+- per-mod JVM unit tests
+
+## Minecraft Modding Guidelines
+
+- Keep client-only classes under `src/client/java`.
+- Never reference client-only classes from common/server entrypoints.
+- Keep registry code small and predictable.
+- Use unique mod ids, asset namespaces, translation keys, and packet ids.
+- Keep saved data keys stable once released.
+- Prefer server-authoritative gameplay changes.
+- Keep random behavior injectable or isolated when it needs tests.
+- Avoid doing expensive scans every tick; amortize, cache, or use goals/events.
+- Keep networking payloads small and version-conscious.
+
+## Anti-Patterns To Avoid
+
+- Copy-pasted Gradle blocks across mods.
+- Copy-pasted gameplay rules embedded in entity classes.
+- Giant entity classes that handle state, AI, rendering assumptions, saving, and item behavior together.
+- Hard-coded paths that only work for one mod.
+- Public methods without a clear owner or contract.
+- Client classes imported by common/server code.
+- Tests that require launching Minecraft when pure JVM tests would cover the rule.
+- Magic numbers without names when they affect gameplay tuning.
+- Silent behavior changes without docs or tests.
+- Large refactors mixed into unrelated feature work.
+
+## Review Checklist
+
+Before merging a change:
+
+- Does shared logic live in one place?
+- Are versions and repeated Gradle settings centralized?
+- Are public APIs documented where useful?
+- Is the code split by responsibility?
+- Are files still reasonably sized?
+- Are there automated tests for pure logic?
+- Does `./gradlew check` pass?
+- Does `./gradlew build` pass before release?
+- Are docs updated when workflow, behavior, or output paths change?

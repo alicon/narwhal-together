@@ -9,4 +9,10 @@ pluginManagement {
 	}
 }
 
-rootProject.name = 'narwhal-together'
+rootProject.name = 'minecraft-mods'
+
+include 'narwhal-together'
+include 'mushroom-the-yorkie'
+
+project(':narwhal-together').projectDir = file('mods/narwhal-together')
+project(':mushroom-the-yorkie').projectDir = file('mods/mushroom-the-yorkie')
