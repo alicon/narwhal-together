@@ -2,8 +2,8 @@
 	"type": "minecraft:crafting_shapeless",
 	"category": "misc",
 	"ingredients": [
-		"minecraft:cooked_chicken",
-		"minecraft:cooked_beef",
+		"minecraft:mutton",
+		"minecraft:bone",
 		"minecraft:bone"
 	],
 	"result": {

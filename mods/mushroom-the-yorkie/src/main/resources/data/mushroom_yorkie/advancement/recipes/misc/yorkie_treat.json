@@ -1,0 +1,35 @@
+{
+	"parent": "minecraft:recipes/root",
+	"criteria": {
+		"has_mutton_and_bone": {
+			"trigger": "minecraft:inventory_changed",
+			"conditions": {
+				"items": [
+					{
+						"items": "minecraft:mutton"
+					},
+					{
+						"items": "minecraft:bone"
+					}
+				]
+			}
+		},
+		"has_the_recipe": {
+			"trigger": "minecraft:recipe_unlocked",
+			"conditions": {
+				"recipe": "mushroom_yorkie:yorkie_treat"
+			}
+		}
+	},
+	"requirements": [
+		[
+			"has_mutton_and_bone",
+			"has_the_recipe"
+		]
+	],
+	"rewards": {
+		"recipes": [
+			"mushroom_yorkie:yorkie_treat"
+		]
+	}
+}

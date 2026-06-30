@@ -59,7 +59,7 @@ final class MushroomWakeUpSpawner {
 		return !level.getEntities(
 				EntityTypeTest.forClass(MushroomYorkieEntity.class),
 				searchBox,
-				yorkie -> yorkie.isAlive() && yorkie.isOwnedBy(player)
+				yorkie -> yorkie.isAlive() && yorkie.belongsTo(player)
 		).isEmpty();
 	}
 
@@ -71,9 +71,7 @@ final class MushroomWakeUpSpawner {
 
 		BlockPos spawnPos = spawnPos(level, bedPos);
 		yorkie.snapTo(spawnPos.getX() + 0.5D, spawnPos.getY(), spawnPos.getZ() + 0.5D, player.getYRot(), 0.0F);
-		yorkie.tame(player);
-		yorkie.setOwner(player);
-		yorkie.setOrderedToSit(false);
+		yorkie.claimFor(player);
 		yorkie.setCustomName(Component.literal("Mushroom"));
 		yorkie.setPersistenceRequired();
 

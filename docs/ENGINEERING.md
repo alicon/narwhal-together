@@ -35,6 +35,9 @@ Good examples:
 - Give each mod only the configuration that is truly unique: mod id, display name, archive name, Modrinth project id, optional dependencies.
 - Do not hard-code repeated Minecraft, Fabric Loader, Fabric API, Java, or JUnit versions in subprojects.
 - Keep output paths symmetric across mods.
+- For mods with multiple Minecraft targets, declare the version matrix in the mod's `build.gradle`
+  and keep version-specific Minecraft/Fabric integration under `src/versions/<minecraft-version>/`.
+  Keep shared pure Java behavior in the normal source roots so tests run across every target.
 
 ## Separation Of Concerns
 

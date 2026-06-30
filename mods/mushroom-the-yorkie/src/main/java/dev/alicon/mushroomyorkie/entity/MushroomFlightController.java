@@ -1,0 +1,72 @@
+package dev.alicon.mushroomyorkie.entity;
+
+import dev.alicon.mushroomyorkie.pet.FlightTrickPolicy;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.phys.Vec3;
+
+final class MushroomFlightController {
+	private MushroomFlightController() {
+	}
+
+	static void followFlyingOwner(MushroomYorkieEntity yorkie) {
+		boolean followingFlyingOwner = !yorkie.isOrderedToSit() && yorkie.ownerIsCreativeFlying();
+		yorkie.setNoGravity(followingFlyingOwner);
+		updateFlightTrick(yorkie, followingFlyingOwner);
+		if (!followingFlyingOwner) {
+			return;
+		}
+
+		LivingEntity owner = yorkie.getOwner();
+		if (owner == null || owner.level() != yorkie.level()) {
+			return;
+		}
+
+		yorkie.fallDistance = 0.0F;
+		Vec3 target = owner.position()
+				.add(owner.getLookAngle().scale(-1.4D))
+				.add(0.0D, -0.8D, 0.0D);
+		Vec3 delta = target.subtract(yorkie.position());
+		faceFlightTarget(yorkie, delta);
+		if (delta.lengthSqr() <= MushroomYorkieEntity.CREATIVE_FLIGHT_FOLLOW_DISTANCE_SQ) {
+			yorkie.setDeltaMovement(yorkie.getDeltaMovement().scale(0.6D));
+			return;
+		}
+
+		yorkie.getNavigation().stop();
+		Vec3 movement = delta.normalize().scale(MushroomYorkieEntity.CREATIVE_FLIGHT_SPEED);
+		yorkie.setDeltaMovement(movement);
+		yorkie.hurtMarked = true;
+	}
+
+	private static void faceFlightTarget(MushroomYorkieEntity yorkie, Vec3 delta) {
+		if (delta.horizontalDistanceSqr() < 1.0E-4D) {
+			return;
+		}
+
+		float yaw = (float) (Math.atan2(delta.z, delta.x) * 180.0D / Math.PI) - 90.0F;
+		yorkie.setYRot(yaw);
+		yorkie.yBodyRot = yaw;
+		yorkie.yHeadRot = yaw;
+		yorkie.yRotO = yaw;
+	}
+
+	private static void updateFlightTrick(MushroomYorkieEntity yorkie, boolean followingFlyingOwner) {
+		if (!followingFlyingOwner) {
+			yorkie.setFlightTrick(MushroomYorkieEntity.FLIGHT_TRICK_NONE, 0);
+			return;
+		}
+
+		int ticks = yorkie.getFlightTrickTicks();
+		if (ticks > 0) {
+			yorkie.setFlightTrickTicks(ticks - 1);
+			return;
+		}
+
+		yorkie.setFlightTrick(MushroomYorkieEntity.FLIGHT_TRICK_NONE, 0);
+		boolean recentlyWalked = yorkie.level().canSeeSky(yorkie.blockPosition()) || yorkie.needs.potty() < 60;
+		if (yorkie.getRandom().nextDouble() < FlightTrickPolicy.trickChance(yorkie.needs, recentlyWalked)) {
+			int trickType = yorkie.getRandom().nextBoolean() ? MushroomYorkieEntity.FLIGHT_TRICK_BARREL_ROLL : MushroomYorkieEntity.FLIGHT_TRICK_LOOP;
+			yorkie.setFlightTrick(trickType, MushroomYorkieEntity.FLIGHT_TRICK_DURATION_TICKS);
+		}
+	}
+}

@@ -9,7 +9,14 @@ This repo optimizes for simple, maintainable Fabric mods for family Minecraft pl
 - Java: target the version in `gradle.properties`
 - Required dependency: Fabric API
 
-For now, support one Minecraft version at a time. Upgrade intentionally and keep release notes clear.
+By default, the workspace builds the version in `gradle.properties`. Individual mods may opt into a
+small version matrix with version-specific source roots when the compatibility value is worth the
+extra maintenance.
+
+NARwhal Together currently supports:
+
+- Minecraft Java Edition `1.21.11`
+- Minecraft Java Edition `1.21.1`
 
 ## Non-Goals For Now
 
@@ -17,9 +24,36 @@ For now, support one Minecraft version at a time. Upgrade intentionally and keep
 - multi-loader architecture
 - broad compatibility layers
 - public plugin APIs
-- backport branches
+- broad backport branches
 
 Those can be reconsidered only when there is a real user need.
+
+## Versioned Source Layout
+
+Keep pure Java logic in the normal source roots:
+
+```text
+mods/<mod>/src/main/java
+mods/<mod>/src/test/java
+```
+
+Put Minecraft/Fabric integration that differs by Minecraft version under:
+
+```text
+mods/<mod>/src/versions/<minecraft-version>/main/java
+mods/<mod>/src/versions/<minecraft-version>/client/java
+```
+
+The active version is selected from `gradle.properties`, or per command with:
+
+```shell
+./gradlew :narwhal-together:check -Ptarget_minecraft_version=1.21.1
+```
+
+A mod that uses versioned sources must declare its supported version matrix in its `build.gradle`.
+The shared Gradle convention wires the matching Minecraft, Fabric Loader, Fabric API, metadata, and
+source roots from that matrix. Versioned mods publish distinct Modrinth version numbers such as
+`0.1.0+mc1.21.1` so separate jars do not collide.
 
 ## Compatibility Rules
 

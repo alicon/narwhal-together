@@ -22,9 +22,12 @@ tasks.register('validateModLayout') {
 
 		subprojects.each { modProject ->
 			def modDir = modProject.projectDir
+			def minecraftVersion = activeMinecraftVersionFor(modProject)
 			def metadataFile = modDir.toPath().resolve('src/main/resources/fabric.mod.json').toFile()
 			def mainSourceDir = modDir.toPath().resolve('src/main/java').toFile()
 			def clientSourceDir = modDir.toPath().resolve('src/client/java').toFile()
+			def versionsDir = modDir.toPath().resolve('src/versions').toFile()
+			def activeVersionDir = modDir.toPath().resolve("src/versions/${minecraftVersion}").toFile()
 
 			if (!metadataFile.file) {
 				throw new GradleException("${modProject.path} is missing src/main/resources/fabric.mod.json")
@@ -34,6 +37,9 @@ tasks.register('validateModLayout') {
 			}
 			if (!clientSourceDir.directory) {
 				throw new GradleException("${modProject.path} is missing src/client/java")
+			}
+			if (versionsDir.directory && !activeVersionDir.directory) {
+				throw new GradleException("${modProject.path} has versioned sources but no src/versions/${minecraftVersion}")
 			}
 
 			def metadata = new groovy.json.JsonSlurper().parse(metadataFile)
@@ -55,10 +61,12 @@ tasks.register('validateModLayout') {
 
 			(metadata.entrypoints ?: [:]).each { environment, entrypoints ->
 				entrypoints.each { entrypoint ->
-					def sourceRoot = environment == 'client' ? 'src/client/java' : 'src/main/java'
-					def sourceFile = modDir.toPath().resolve("${sourceRoot}/${entrypoint.replace('.', '/')}.java").toFile()
-					if (!sourceFile.file) {
-						throw new GradleException("${modProject.path} ${environment} entrypoint '${entrypoint}' does not exist at ${sourceRoot}")
+					def sourceRoots = sourceRootsFor(modDir, environment, minecraftVersion)
+					def entrypointPath = "${entrypoint.replace('.', '/')}.java"
+					def sourceFile = sourceRoots.collect { root -> root.toPath().resolve(entrypointPath).toFile() }
+							.find { it.file }
+					if (sourceFile == null) {
+						throw new GradleException("${modProject.path} ${environment} entrypoint '${entrypoint}' does not exist in ${sourceRoots.collect { rootProject.projectDir.toPath().relativize(it.toPath()).toString() }.join(', ')}")
 					}
 				}
 			}
@@ -193,18 +201,19 @@ tasks.register('validateNoClientImportsInMain') {
 		def violations = []
 
 		subprojects.each { modProject ->
-			def mainJava = modProject.projectDir.toPath().resolve('src/main/java').toFile()
-			if (!mainJava.directory) {
-				return
-			}
-			mainJava.eachFileRecurse { file ->
-				if (!file.file || !file.name.endsWith('.java')) {
+			sourceRootsFor(modProject.projectDir, 'main', activeMinecraftVersionFor(modProject)).each { mainJava ->
+				if (!mainJava.directory) {
 					return
 				}
-				def relative = rootProject.projectDir.toPath().relativize(file.toPath()).toString()
-				file.readLines().eachWithIndex { line, index ->
-					if (forbiddenImports.any { line.startsWith(it) }) {
-						violations << "${relative}:${index + 1}: client-only import in common source: ${line.trim()}"
+				mainJava.eachFileRecurse { file ->
+					if (!file.file || !file.name.endsWith('.java')) {
+						return
+					}
+					def relative = rootProject.projectDir.toPath().relativize(file.toPath()).toString()
+					file.readLines().eachWithIndex { line, index ->
+						if (forbiddenImports.any { line.startsWith(it) }) {
+							violations << "${relative}:${index + 1}: client-only import in common source: ${line.trim()}"
+						}
 					}
 				}
 			}
@@ -225,8 +234,9 @@ tasks.register('validatePublicApiDocs') {
 		def violations = []
 
 		subprojects.each { modProject ->
-			['src/main/java', 'src/client/java'].each { sourcePath ->
-				def sourceDir = modProject.projectDir.toPath().resolve(sourcePath).toFile()
+			def minecraftVersion = activeMinecraftVersionFor(modProject)
+			(['main', 'client'] as Set).each { environment ->
+				sourceRootsFor(modProject.projectDir, environment, minecraftVersion).each { sourceDir ->
 				if (!sourceDir.directory) {
 					return
 				}
@@ -248,12 +258,30 @@ tasks.register('validatePublicApiDocs') {
 					}
 				}
 			}
+			}
 		}
 
 		if (!violations.empty) {
 			throw new GradleException("Public API documentation validation failed:\n" + violations.join('\n'))
 		}
 	}
+}
+
+Object activeMinecraftVersionFor(Project modProject) {
+	return modProject.ext.has('active_minecraft_version')
+			? modProject.ext.active_minecraft_version
+			: modProject.minecraft_version
+}
+
+List<File> sourceRootsFor(File modDir, String environment, Object minecraftVersion) {
+	def sourceRoots = []
+	def sourcePath = environment == 'client' ? 'src/client/java' : 'src/main/java'
+	sourceRoots << modDir.toPath().resolve(sourcePath).toFile()
+	def versionPath = environment == 'client'
+			? "src/versions/${minecraftVersion}/client/java"
+			: "src/versions/${minecraftVersion}/main/java"
+	sourceRoots << modDir.toPath().resolve(versionPath).toFile()
+	return sourceRoots
 }
 
 boolean hasPublicApiDoc(List<String> lines, int declarationIndex) {

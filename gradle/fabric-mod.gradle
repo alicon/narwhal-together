@@ -9,14 +9,39 @@ def modrinthProjectEnv = project.ext.modrinth_project_env
 def modrinthProjectFallback = project.ext.modrinth_project_fallback
 def optionalModrinthProjects = project.ext.modrinth_optional_projects
 def changelogFile = rootProject.file("docs/release-notes/${project.name}/${project.mod_version}.md")
+def versionMatrix = project.ext.has('supported_minecraft_versions') ? project.ext.supported_minecraft_versions : [:]
+def requestedMinecraftVersion = project.findProperty('target_minecraft_version')
+if (requestedMinecraftVersion && !versionMatrix.isEmpty() && !versionMatrix.containsKey(requestedMinecraftVersion)) {
+	throw new GradleException("${project.path} does not support Minecraft ${requestedMinecraftVersion}; supported versions: ${versionMatrix.keySet().join(', ')}")
+}
+def activeMinecraftVersion = requestedMinecraftVersion && !versionMatrix.isEmpty()
+		? requestedMinecraftVersion
+		: project.minecraft_version
+def activeVersionConfig = versionMatrix.get(activeMinecraftVersion) ?: [:]
+def activeFabricApiVersion = activeVersionConfig.fabric_api_version ?: project.fabric_api_version
+def activeLoaderVersion = activeVersionConfig.loader_version ?: project.loader_version
+def versionedSourceRoot = "src/versions/${activeMinecraftVersion}"
+def publishedVersionNumber = versionMatrix.isEmpty()
+		? project.mod_version
+		: "${project.mod_version}+mc${activeMinecraftVersion}"
+
+project.ext.active_minecraft_version = activeMinecraftVersion
+project.ext.active_fabric_api_version = activeFabricApiVersion
+project.ext.active_loader_version = activeLoaderVersion
 
 version = project.mod_version
 group = project.maven_group
 
-layout.buildDirectory = rootProject.layout.buildDirectory.dir("mods/${project.name}")
+layout.buildDirectory = rootProject.layout.buildDirectory.dir("mods/${project.name}/${activeMinecraftVersion}")
 
 base {
 	archivesName = archiveName
+}
+
+sourceSets {
+	main {
+		java.srcDir "${versionedSourceRoot}/main/java"
+	}
 }
 
 loom {
@@ -43,14 +68,20 @@ loom {
 	}
 }
 
+sourceSets {
+	client {
+		java.srcDir "${versionedSourceRoot}/client/java"
+	}
+}
+
 modrinth {
 	token = System.getenv("MODRINTH_TOKEN")
 	projectId = System.getenv(modrinthProjectEnv) ?: modrinthProjectFallback
-	versionNumber = project.version
-	versionName = "${displayName} ${project.version} for Minecraft ${project.minecraft_version}"
+	versionNumber = publishedVersionNumber
+	versionName = "${displayName} ${project.version} for Minecraft ${activeMinecraftVersion}"
 	versionType = System.getenv("MODRINTH_VERSION_TYPE") ?: "alpha"
 	uploadFile = remapJar
-	gameVersions = [project.minecraft_version]
+	gameVersions = [activeMinecraftVersion]
 	loaders = ["fabric"]
 	if (changelogFile.exists()) {
 		changelog = changelogFile.text
@@ -65,10 +96,10 @@ modrinth {
 }
 
 dependencies {
-	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	minecraft "com.mojang:minecraft:${activeMinecraftVersion}"
 	mappings loom.officialMojangMappings()
-	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+	modImplementation "net.fabricmc:fabric-loader:${activeLoaderVersion}"
+	modImplementation "net.fabricmc.fabric-api:fabric-api:${activeFabricApiVersion}"
 
 	testImplementation platform("org.junit:junit-bom:${project.junit_version}")
 	testImplementation "org.junit.jupiter:junit-jupiter"
@@ -77,9 +108,10 @@ dependencies {
 
 processResources {
 	inputs.property "version", project.version
+	inputs.property "minecraft_dependency", "~${activeMinecraftVersion}"
 
 	filesMatching("fabric.mod.json") {
-		expand "version": project.version
+		expand "version": project.version, "minecraft_dependency": "~${activeMinecraftVersion}"
 	}
 }
 

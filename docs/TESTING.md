@@ -28,6 +28,12 @@ Run one mod's tests:
 ./gradlew :mushroom-the-yorkie:test
 ```
 
+Run a supported NARwhal Minecraft-version variant:
+
+```shell
+./gradlew :narwhal-together:check -Ptarget_minecraft_version=1.21.1
+```
+
 Build all jars:
 
 ```shell
@@ -37,8 +43,8 @@ Build all jars:
 Production jars are written to:
 
 ```text
-build/mods/narwhal-together/libs/narwhal-together-<version>.jar
-build/mods/mushroom-the-yorkie/libs/mushroom-the-yorkie-<version>.jar
+build/mods/narwhal-together/<minecraft-version>/libs/narwhal-together-<version>.jar
+build/mods/mushroom-the-yorkie/<minecraft-version>/libs/mushroom-the-yorkie-<version>.jar
 ```
 
 Run Mushroom's headless Minecraft GameTests:
@@ -121,7 +127,7 @@ Mushroom the Yorkie:
 - [ ] The Mushroom spawn egg creates a small Yorkie entity.
 - [ ] Mushroom renders with pointy ears and no missing texture.
 - [ ] Yorkie treats tame and feed Mushroom.
-- [ ] Cooked chicken + cooked beef + bone crafts 8 Yorkie Treats.
+- [ ] Mutton + two bones crafts 8 Yorkie Treats.
 - [ ] Creative inventory has a Mushroom the Yorkie tab.
 - [ ] After a successful night in a bed, Mushroom appears near the bed already tamed.
 - [ ] Empty-hand owner interaction toggles sit/follow.
