@@ -23,6 +23,9 @@
 			"dev.alicon.narwhaltogether.client.NarwhalTogetherClient"
 		]
 	},
+	"mixins": [
+		"narwhal_together.client.mixins.json"
+	],
 	"depends": {
 		"fabricloader": ">=0.19.3",
 		"minecraft": "${minecraft_dependency}",

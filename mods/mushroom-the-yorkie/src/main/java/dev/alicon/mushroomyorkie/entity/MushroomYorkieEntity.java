@@ -108,6 +108,7 @@ public final class MushroomYorkieEntity extends net.minecraft.world.entity.Tamab
 				.add(Attributes.MAX_HEALTH, 12.0D)
 				.add(Attributes.MOVEMENT_SPEED, 0.34D)
 				.add(Attributes.FOLLOW_RANGE, 24.0D)
+				.add(Attributes.ATTACK_DAMAGE, 1.0D)
 				.add(Attributes.STEP_HEIGHT, 1.0D);
 	}
 

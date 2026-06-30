@@ -1,0 +1,11 @@
+{
+	"required": true,
+	"package": "dev.alicon.narwhaltogether.client.mixin",
+	"compatibilityLevel": "JAVA_21",
+	"client": [
+		"AbstractContainerScreenAccessor"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}

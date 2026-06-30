@@ -24,6 +24,10 @@ public final class NarwhalTogetherClient implements ClientModInitializer {
 			while (TELEPORT_TO_PLAYER.consumeClick()) {
 				requestTeleport(client);
 			}
+			if (ControlifyTeleportShortcut.consumeClick(client)) {
+				requestTeleport(client);
+			}
+			SwitchStyleControllerCrafting.tick(client);
 		});
 	}
 
