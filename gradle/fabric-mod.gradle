@@ -85,7 +85,7 @@ modrinth {
 	token = System.getenv("MODRINTH_TOKEN")
 	projectId = System.getenv(modrinthProjectEnv) ?: modrinthProjectFallback
 	versionNumber = publishedVersionNumber
-	versionName = "${displayName} ${project.version} for Minecraft ${activeMinecraftVersion}"
+	versionName = "${displayName} ${publishedVersionNumber} for Minecraft ${activeMinecraftVersion}"
 	versionType = System.getenv("MODRINTH_VERSION_TYPE") ?: "alpha"
 	uploadFile = remapJar
 	gameVersions = [activeMinecraftVersion]
