@@ -66,6 +66,8 @@ After the Modrinth project exists:
 
 Never commit the token.
 
+For local metadata syncs on macOS, the token can be stored in Keychain as a generic password with service `modrinth-token` and account `abellicon`. The sync script reads that entry automatically when `MODRINTH_TOKEN` is not already set.
+
 Run **Sync Modrinth Metadata** from the repository's Actions tab whenever the name, description, license, links, icon, or gallery material changes. Select the mod to sync from the workflow input. The workflow leaves the project's review status unchanged.
 
 ## Publish

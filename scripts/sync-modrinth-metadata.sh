@@ -1,7 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-: "${MODRINTH_TOKEN:?MODRINTH_TOKEN is required}"
+if [[ -z "${MODRINTH_TOKEN:-}" ]] && command -v security >/dev/null 2>&1; then
+	MODRINTH_TOKEN="$(security find-generic-password -s modrinth-token -a abellicon -w 2>/dev/null || true)"
+fi
+
+: "${MODRINTH_TOKEN:?MODRINTH_TOKEN is required. Set it directly or save it in macOS Keychain as service 'modrinth-token' with account 'abellicon'.}"
 
 mod="${MODRINTH_MOD:-narwhal-together}"
 
@@ -152,32 +156,36 @@ urlencode() {
 	jq -nr --arg value "$1" '$value|@uri'
 }
 
-for stale_title in "${stale_gallery_titles[@]}"; do
-	while IFS= read -r stale_url; do
-		if [[ -z "$stale_url" ]]; then
+if ((${#stale_gallery_titles[@]})); then
+	for stale_title in "${stale_gallery_titles[@]}"; do
+		while IFS= read -r stale_url; do
+			if [[ -z "$stale_url" ]]; then
+				continue
+			fi
+			curl --fail-with-body --silent --show-error \
+				--request DELETE \
+				--header "$auth_header" \
+				--header "User-Agent: $user_agent" \
+				"$api/gallery?url=$(urlencode "$stale_url")"
+		done < <(jq -r --arg title "$stale_title" '.gallery[]? | select(.title == $title) | .url' <<<"$project_json")
+	done
+fi
+
+if ((${#gallery_specs[@]})); then
+	for spec in "${gallery_specs[@]}"; do
+		IFS='|' read -r gallery_title gallery_file gallery_description featured ordering <<<"$spec"
+		if jq -e --arg title "$gallery_title" '.gallery[]? | select(.title == $title)' <<<"$project_json" >/dev/null; then
 			continue
 		fi
+
 		curl --fail-with-body --silent --show-error \
-			--request DELETE \
+			--request POST \
 			--header "$auth_header" \
 			--header "User-Agent: $user_agent" \
-			"$api/gallery?url=$(urlencode "$stale_url")"
-	done < <(jq -r --arg title "$stale_title" '.gallery[]? | select(.title == $title) | .url' <<<"$project_json")
-done
-
-for spec in "${gallery_specs[@]}"; do
-	IFS='|' read -r gallery_title gallery_file gallery_description featured ordering <<<"$spec"
-	if jq -e --arg title "$gallery_title" '.gallery[]? | select(.title == $title)' <<<"$project_json" >/dev/null; then
-		continue
-	fi
-
-	curl --fail-with-body --silent --show-error \
-		--request POST \
-		--header "$auth_header" \
-		--header "User-Agent: $user_agent" \
-		--header "Content-Type: image/png" \
-		--data-binary @"$gallery_file" \
-		"$api/gallery?ext=png&featured=${featured}&title=$(urlencode "$gallery_title")&description=$(urlencode "$gallery_description")&ordering=${ordering}"
-done
+			--header "Content-Type: image/png" \
+			--data-binary @"$gallery_file" \
+			"$api/gallery?ext=png&featured=${featured}&title=$(urlencode "$gallery_title")&description=$(urlencode "$gallery_description")&ordering=${ordering}"
+	done
+fi
 
 echo "Modrinth metadata synchronized for $mod ($project_id)"
