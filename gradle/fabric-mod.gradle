@@ -24,6 +24,12 @@ def versionedSourceRoot = "src/versions/${activeMinecraftVersion}"
 def publishedVersionNumber = versionMatrix.isEmpty()
 		? project.mod_version
 		: "${project.mod_version}+mc${activeMinecraftVersion}"
+def versionedCommonExcludes = project.ext.has('versioned_common_excludes')
+		? project.ext.versioned_common_excludes.get(activeMinecraftVersion, [])
+		: []
+def versionedClientExcludes = project.ext.has('versioned_client_excludes')
+		? project.ext.versioned_client_excludes.get(activeMinecraftVersion, [])
+		: []
 
 project.ext.active_minecraft_version = activeMinecraftVersion
 project.ext.active_fabric_api_version = activeFabricApiVersion
@@ -116,6 +122,16 @@ processResources {
 }
 
 tasks.withType(JavaCompile).configureEach {
+	if (!versionedCommonExcludes.isEmpty() || !versionedClientExcludes.isEmpty()) {
+		source = source.filter { file ->
+			def path = file.path
+			!versionedCommonExcludes.any { excluded ->
+				path.endsWith("${File.separator}src${File.separator}main${File.separator}java${File.separator}${excluded.replace('/', File.separator)}")
+			} && !versionedClientExcludes.any { excluded ->
+				path.endsWith("${File.separator}src${File.separator}client${File.separator}java${File.separator}${excluded.replace('/', File.separator)}")
+			}
+		}
+	}
 	options.release = 21
 }
 
@@ -124,6 +140,16 @@ tasks.withType(Test).configureEach {
 }
 
 tasks.withType(Javadoc).configureEach {
+	if (!versionedCommonExcludes.isEmpty() || !versionedClientExcludes.isEmpty()) {
+		source = source.filter { file ->
+			def path = file.path
+			!versionedCommonExcludes.any { excluded ->
+				path.endsWith("${File.separator}src${File.separator}main${File.separator}java${File.separator}${excluded.replace('/', File.separator)}")
+			} && !versionedClientExcludes.any { excluded ->
+				path.endsWith("${File.separator}src${File.separator}client${File.separator}java${File.separator}${excluded.replace('/', File.separator)}")
+			}
+		}
+	}
 	failOnError = true
 	options.encoding = 'UTF-8'
 	options.addStringOption('Xdoclint:reference,syntax', '-quiet')
@@ -137,6 +163,19 @@ java {
 	withSourcesJar()
 	sourceCompatibility = JavaVersion.VERSION_21
 	targetCompatibility = JavaVersion.VERSION_21
+}
+
+tasks.named('sourcesJar') {
+	if (!versionedCommonExcludes.isEmpty() || !versionedClientExcludes.isEmpty()) {
+		exclude { details ->
+			def path = details.file.path
+			versionedCommonExcludes.any { excluded ->
+				path.endsWith("${File.separator}src${File.separator}main${File.separator}java${File.separator}${excluded.replace('/', File.separator)}")
+			} || versionedClientExcludes.any { excluded ->
+				path.endsWith("${File.separator}src${File.separator}client${File.separator}java${File.separator}${excluded.replace('/', File.separator)}")
+			}
+		}
+	}
 }
 
 publishing {

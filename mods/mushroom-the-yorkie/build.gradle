@@ -6,6 +6,37 @@ ext {
 	modrinth_project_fallback = 'mushroom-the-yorkie'
 	modrinth_optional_projects = []
 	enable_game_tests = true
+	supported_minecraft_versions = [
+			'1.21.11': [
+					fabric_api_version: '0.141.4+1.21.11',
+					loader_version    : '0.19.3'
+			],
+			'1.21.1' : [
+					fabric_api_version: '0.116.12+1.21.1',
+					loader_version    : '0.16.14'
+			]
+	]
+	versioned_common_excludes = [
+			'1.21.1': [
+					'dev/alicon/mushroomyorkie/MushroomOwnerTravelHandler.java',
+					'dev/alicon/mushroomyorkie/MushroomTheYorkie.java',
+					'dev/alicon/mushroomyorkie/MushroomWakeUpSpawner.java',
+					'dev/alicon/mushroomyorkie/entity/HesitantHostileMobGoal.java',
+					'dev/alicon/mushroomyorkie/entity/ModEntities.java',
+					'dev/alicon/mushroomyorkie/entity/MushroomTrustState.java',
+					'dev/alicon/mushroomyorkie/entity/MushroomYorkieEntity.java',
+					'dev/alicon/mushroomyorkie/gametest/MushroomYorkieGameTests.java',
+					'dev/alicon/mushroomyorkie/item/ModItems.java',
+					'dev/alicon/mushroomyorkie/item/MushroomYorkieSpawnEggItem.java'
+			]
+	]
+	versioned_client_excludes = [
+			'1.21.1': [
+					'dev/alicon/mushroomyorkie/client/render/MushroomYorkieModel.java',
+					'dev/alicon/mushroomyorkie/client/render/MushroomYorkieRenderer.java',
+					'dev/alicon/mushroomyorkie/client/render/MushroomYorkieRenderState.java'
+			]
+	]
 }
 
 apply from: rootProject.file('gradle/fabric-mod.gradle')

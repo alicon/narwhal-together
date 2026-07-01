@@ -5,6 +5,7 @@ import dev.alicon.mushroomyorkie.item.ModItems;
 import dev.alicon.mushroomyorkie.pet.PetNeeds;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -27,14 +28,10 @@ import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.SitWhenOrderedToGoal;
 import net.minecraft.world.entity.animal.Animal;
-import net.minecraft.world.entity.animal.wolf.WolfSoundVariant;
-import net.minecraft.world.entity.animal.wolf.WolfSoundVariants;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.entity.EntityTypeTest;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
 
 /** Tameable Yorkie companion entity that adapts Minecraft events to Mushroom's pet state. */
@@ -104,7 +101,7 @@ public final class MushroomYorkieEntity extends net.minecraft.world.entity.Tamab
 	 * @return attribute builder registered during mod initialization
 	 */
 	public static AttributeSupplier.Builder createAttributes() {
-		return Animal.createAnimalAttributes()
+		return Animal.createMobAttributes()
 				.add(Attributes.MAX_HEALTH, 12.0D)
 				.add(Attributes.MOVEMENT_SPEED, 0.34D)
 				.add(Attributes.FOLLOW_RANGE, 24.0D)
@@ -191,19 +188,18 @@ public final class MushroomYorkieEntity extends net.minecraft.world.entity.Tamab
 		this.trust.claim(player);
 		this.scaredRunTicks = 0;
 		this.tame(player);
-		this.setOwner(player);
 		this.setMushroomOrderedToSit(false);
 		this.setSleeping(false);
 	}
 
 	private void performTreatTrick() {
-		int trick = this.random.nextInt(4);
-		switch (trick) {
-			case 0 -> this.playSound(cuteWolfSounds().pantSound().value(), 0.45F, 1.45F);
-			case 1 -> this.playSound(cuteWolfSounds().pantSound().value(), 0.5F, 1.45F);
-			case 2 -> this.setDeltaMovement(this.getDeltaMovement().add(0.0D, 0.28D, 0.0D));
-			default -> this.playSound(cuteWolfSounds().growlSound().value(), 0.45F, 1.55F);
-		}
+			int trick = this.random.nextInt(4);
+			switch (trick) {
+				case 0 -> this.playSound(SoundEvents.WOLF_PANT, 0.45F, 1.45F);
+				case 1 -> this.playSound(SoundEvents.WOLF_PANT, 0.5F, 1.45F);
+				case 2 -> this.setDeltaMovement(this.getDeltaMovement().add(0.0D, 0.28D, 0.0D));
+				default -> this.playSound(SoundEvents.WOLF_GROWL, 0.45F, 1.55F);
+			}
 
 		if (this.level() instanceof ServerLevel serverLevel) {
 			serverLevel.sendParticles(ParticleTypes.HEART, this.getX(), this.getY() + 0.5D, this.getZ(), 4, 0.25D, 0.2D, 0.25D, 0.0D);
@@ -218,15 +214,16 @@ public final class MushroomYorkieEntity extends net.minecraft.world.entity.Tamab
 		this.lastInteractTick = this.tickCount;
 
 		if (doubleClick) {
-			this.nightWakeTicks = NIGHT_WAKE_TICKS;
-			this.setSleeping(false);
-			this.playSound(cuteWolfSounds().pantSound().value(), 0.35F, 1.45F);
-		}
+				this.nightWakeTicks = NIGHT_WAKE_TICKS;
+				this.setSleeping(false);
+				this.playSound(SoundEvents.WOLF_PANT, 0.35F, 1.45F);
+			}
 	}
 
 	@Override
-	protected void customServerAiStep(ServerLevel level) {
-		super.customServerAiStep(level);
+	protected void customServerAiStep() {
+		super.customServerAiStep();
+		ServerLevel level = (ServerLevel) this.level();
 		MushroomFlightController.followFlyingOwner(this);
 		this.tickNightBehavior(level);
 		this.tickTreatBark(level);
@@ -372,7 +369,7 @@ public final class MushroomYorkieEntity extends net.minecraft.world.entity.Tamab
 	}
 
 	void bark() {
-		this.playSound(cuteWolfSounds().ambientSound().value(), 0.5F, 1.45F);
+		this.playSound(SoundEvents.WOLF_AMBIENT, 0.5F, 1.45F);
 	}
 
 	private void facePosition(Vec3 target) {
@@ -421,35 +418,35 @@ public final class MushroomYorkieEntity extends net.minecraft.world.entity.Tamab
 	}
 
 	@Override
-	protected void addAdditionalSaveData(ValueOutput output) {
-		super.addAdditionalSaveData(output);
-		output.putInt(HUNGER_KEY, this.needs.hunger());
-		output.putInt(POTTY_KEY, this.needs.potty());
-		output.putInt(MOOD_KEY, this.needs.mood());
-		output.putInt(ENERGY_KEY, this.needs.energy());
-		output.putInt(NIGHT_WAKE_TICKS_KEY, this.nightWakeTicks);
-		output.putLong(PEACEFUL_MOB_BARK_MUTED_DAY_KEY, this.peacefulMobBarkMutedDay);
-		this.trust.save(output);
+	public void addAdditionalSaveData(CompoundTag tag) {
+		super.addAdditionalSaveData(tag);
+		tag.putInt(HUNGER_KEY, this.needs.hunger());
+		tag.putInt(POTTY_KEY, this.needs.potty());
+		tag.putInt(MOOD_KEY, this.needs.mood());
+		tag.putInt(ENERGY_KEY, this.needs.energy());
+		tag.putInt(NIGHT_WAKE_TICKS_KEY, this.nightWakeTicks);
+		tag.putLong(PEACEFUL_MOB_BARK_MUTED_DAY_KEY, this.peacefulMobBarkMutedDay);
+		this.trust.save(tag);
 	}
 
 	@Override
-	protected void readAdditionalSaveData(ValueInput input) {
-		super.readAdditionalSaveData(input);
+	public void readAdditionalSaveData(CompoundTag tag) {
+		super.readAdditionalSaveData(tag);
 		this.needs = new PetNeeds(
-				input.getIntOr(HUNGER_KEY, PetNeeds.DEFAULT_HUNGER),
-				input.getIntOr(POTTY_KEY, PetNeeds.DEFAULT_POTTY),
-				input.getIntOr(MOOD_KEY, PetNeeds.DEFAULT_MOOD),
-				input.getIntOr(ENERGY_KEY, PetNeeds.DEFAULT_ENERGY)
+				tag.contains(HUNGER_KEY) ? tag.getInt(HUNGER_KEY) : PetNeeds.DEFAULT_HUNGER,
+				tag.contains(POTTY_KEY) ? tag.getInt(POTTY_KEY) : PetNeeds.DEFAULT_POTTY,
+				tag.contains(MOOD_KEY) ? tag.getInt(MOOD_KEY) : PetNeeds.DEFAULT_MOOD,
+				tag.contains(ENERGY_KEY) ? tag.getInt(ENERGY_KEY) : PetNeeds.DEFAULT_ENERGY
 		);
-		this.nightWakeTicks = input.getIntOr(NIGHT_WAKE_TICKS_KEY, 0);
-		this.peacefulMobBarkMutedDay = input.getLongOr(PEACEFUL_MOB_BARK_MUTED_DAY_KEY, -1L);
-		this.trust.read(input);
+		this.nightWakeTicks = tag.contains(NIGHT_WAKE_TICKS_KEY) ? tag.getInt(NIGHT_WAKE_TICKS_KEY) : 0;
+		this.peacefulMobBarkMutedDay = tag.contains(PEACEFUL_MOB_BARK_MUTED_DAY_KEY) ? tag.getLong(PEACEFUL_MOB_BARK_MUTED_DAY_KEY) : -1L;
+		this.trust.read(tag);
 	}
 
 	@Override
-	public boolean hurtServer(ServerLevel level, DamageSource damageSource, float amount) {
-		boolean hurt = super.hurtServer(level, damageSource, amount);
-		if (hurt && damageSource.getEntity() instanceof Player player && this.belongsTo(player)) {
+	public boolean hurt(DamageSource damageSource, float amount) {
+		boolean hurt = super.hurt(damageSource, amount);
+		if (hurt && this.level() instanceof ServerLevel level && damageSource.getEntity() instanceof Player player && this.belongsTo(player)) {
 			this.recordTrustedPlayerHit(level, player);
 		}
 
@@ -464,9 +461,9 @@ public final class MushroomYorkieEntity extends net.minecraft.world.entity.Tamab
 		this.scaredRunTicks = SCARED_RUN_TICKS;
 		this.setMushroomOrderedToSit(false);
 		this.setSleeping(false);
-		this.setOwner(null);
+		this.setOwnerUUID(null);
 		this.setTame(false, true);
-		this.playSound(cuteWolfSounds().whineSound().value(), 0.7F, 1.45F);
+		this.playSound(SoundEvents.WOLF_WHINE, 0.7F, 1.45F);
 	}
 
 	@Override
@@ -476,12 +473,12 @@ public final class MushroomYorkieEntity extends net.minecraft.world.entity.Tamab
 
 	@Override
 	protected net.minecraft.sounds.SoundEvent getHurtSound(DamageSource damageSource) {
-		return cuteWolfSounds().hurtSound().value();
+		return SoundEvents.WOLF_HURT;
 	}
 
 	@Override
 	protected net.minecraft.sounds.SoundEvent getDeathSound() {
-		return cuteWolfSounds().deathSound().value();
+		return SoundEvents.WOLF_DEATH;
 	}
 
 	@Override
@@ -492,10 +489,6 @@ public final class MushroomYorkieEntity extends net.minecraft.world.entity.Tamab
 	@Override
 	public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob partner) {
 		return null;
-	}
-
-	static WolfSoundVariant cuteWolfSounds() {
-		return SoundEvents.WOLF_SOUNDS.get(WolfSoundVariants.SoundSet.CUTE);
 	}
 
 	static Vec3 normalizedHorizontal(Vec3 vector) {
