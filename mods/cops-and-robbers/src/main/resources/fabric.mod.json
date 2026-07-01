@@ -1,0 +1,32 @@
+{
+	"schemaVersion": 1,
+	"id": "cops_robbers",
+	"version": "${version}",
+	"name": "Cops and Robbers",
+	"description": "Adds a rideable, low-poly electric police truck with a red-and-blue lightbar.",
+	"authors": [
+		"alicon"
+	],
+	"contact": {
+		"homepage": "https://github.com/alicon/minecraft-mods",
+		"sources": "https://github.com/alicon/minecraft-mods",
+		"issues": "https://github.com/alicon/minecraft-mods/issues"
+	},
+	"license": "MIT",
+	"icon": "assets/cops_robbers/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"dev.alicon.copsrobbers.CopsAndRobbers"
+		],
+		"client": [
+			"dev.alicon.copsrobbers.client.CopsAndRobbersClient"
+		]
+	},
+	"depends": {
+		"fabricloader": ">=0.19.3",
+		"minecraft": "${minecraft_dependency}",
+		"java": ">=21",
+		"fabric-api": "*"
+	}
+}

@@ -1,0 +1,22 @@
+{
+	"entity.cops_robbers.bank_robber": "Bank Robber",
+	"entity.cops_robbers.cop": "Cop",
+	"entity.cops_robbers.police_cruiser": "Police Cruiser",
+	"entity.cops_robbers.fire_truck": "Fire Truck",
+	"entity.cops_robbers.fireman": "Firefighter",
+	"entity.cops_robbers.teller": "Bank Teller",
+	"item.cops_robbers.bank_robber_spawn_egg": "Bank Robber Spawn Egg",
+	"item.cops_robbers.bank_kit": "Bank Kit",
+	"item.cops_robbers.cop_spawn_egg": "Cop Spawn Egg",
+	"item.cops_robbers.police_cruiser_spawn_egg": "Police Cruiser Spawn Egg",
+	"item.cops_robbers.fire_truck_spawn_egg": "Fire Truck Spawn Egg",
+	"item.cops_robbers.fireman_spawn_egg": "Firefighter Spawn Egg",
+	"item.cops_robbers.police_station_kit": "Police Station Kit",
+	"item.cops_robbers.teller_spawn_egg": "Bank Teller Spawn Egg",
+	"itemGroup.cops_robbers.main": "Cops and Robbers",
+	"key.categories.cops_robbers.controls": "Cops and Robbers",
+	"key.cops_robbers.toggle_lights": "Toggle Cruiser Lights (controller inventory)",
+	"key.cops_robbers.toggle_siren": "Toggle Cruiser Siren (controller drop)",
+	"key.cops_robbers.barrel_roll": "Cruiser Barrel Roll (controller swap hands)",
+	"key.cops_robbers.loop": "Cruiser Loop (controller pick block)"
+}

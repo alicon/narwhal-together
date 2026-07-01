@@ -11,6 +11,7 @@ on:
         options:
           - mushroom-the-yorkie
           - narwhal-together
+          - cops-and-robbers
       version_type:
         description: Modrinth release channel
         required: true
@@ -47,4 +48,5 @@ jobs:
           MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
           MODRINTH_PROJECT_ID: ${{ vars.MODRINTH_PROJECT_ID }}
           MUSHROOM_MODRINTH_PROJECT_ID: ${{ vars.MUSHROOM_MODRINTH_PROJECT_ID }}
+          COPS_ROBBERS_MODRINTH_PROJECT_ID: ${{ vars.COPS_ROBBERS_MODRINTH_PROJECT_ID }}
           MODRINTH_VERSION_TYPE: ${{ inputs.version_type }}

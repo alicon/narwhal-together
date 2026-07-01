@@ -1,0 +1,6 @@
+{
+	"model": {
+		"type": "minecraft:model",
+		"model": "cops_robbers:item/bank_robber_spawn_egg"
+	}
+}

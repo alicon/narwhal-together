@@ -38,6 +38,21 @@ Use `mods/mushroom-the-yorkie/src/main/resources/assets/mushroom_yorkie/icon.png
 - `docs/media/mushroom-the-yorkie-mob-chase.png`
 - `docs/media/mushroom-the-yorkie-adventure.png`
 
+Create a Modrinth **Mod** project for Cops and Robbers with these values:
+
+- Name: `Cops and Robbers`
+- Suggested slug: `cops-and-robbers`
+- Summary: `Police cruisers, fire trucks, robbers, banks, and patrol play for family Minecraft worlds.`
+- License: `MIT`
+- Source: `https://github.com/alicon/minecraft-mods`
+- Client environment: `Required`
+- Server environment: `Required`
+- Loader: `Fabric`
+- Game version: `1.21.11`
+- Required dependency: `Fabric API`
+
+Use `mods/cops-and-robbers/src/main/resources/assets/cops_robbers/icon.png` as the project icon and `docs/MODRINTH_COPS_AND_ROBBERS.md` as the long description.
+
 ## Configure publishing
 
 After the Modrinth project exists:
@@ -47,6 +62,7 @@ After the Modrinth project exists:
 3. Add a repository secret named `MODRINTH_TOKEN`.
 4. Add a repository variable named `MODRINTH_PROJECT_ID` containing the NARwhal project ID or slug.
 5. Add a repository variable named `MUSHROOM_MODRINTH_PROJECT_ID` containing the Mushroom project ID or slug. If this is omitted, the workflows use the slug `mushroom-the-yorkie`.
+6. Add a repository variable named `COPS_ROBBERS_MODRINTH_PROJECT_ID` containing the Cops and Robbers project ID or slug. If this is omitted, the workflows use the slug `cops-and-robbers`.
 
 Never commit the token.
 

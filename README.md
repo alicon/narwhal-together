@@ -6,6 +6,7 @@ Fabric mod workspace for small Minecraft projects.
 
 - **NARwhal Together**: family-focused multiplayer helpers. Current feature: press `G` to teleport to the next online player.
 - **Mushroom the Yorkie**: a tiny pointy-eared Yorkie companion with pet needs, treats, tame/follow/sit behavior, and early trick hooks.
+- **Cops and Robbers**: police cruisers, fire trucks, cops, robbers, bank tellers, and placeable bank/police station kits.
 
 ## Layout
 
@@ -14,6 +15,8 @@ mods/
   narwhal-together/
     src/
   mushroom-the-yorkie/
+    src/
+  cops-and-robbers/
     src/
 gradle/
   fabric-mod.gradle
@@ -39,6 +42,7 @@ Distributable jars are written symmetrically:
 ```text
 build/mods/narwhal-together/libs/narwhal-together-<version>.jar
 build/mods/mushroom-the-yorkie/libs/mushroom-the-yorkie-<version>.jar
+build/mods/cops-and-robbers/libs/cops-and-robbers-<version>.jar
 ```
 
 ## Verification
@@ -54,6 +58,7 @@ This runs unit tests plus repo quality gates for layout, metadata, formatting, f
 ```shell
 ./gradlew :narwhal-together:build
 ./gradlew :mushroom-the-yorkie:build
+./gradlew :cops-and-robbers:build
 ```
 
 ## Mushroom Config

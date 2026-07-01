@@ -1,0 +1,17 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"category": "transportation",
+	"pattern": [
+		"III",
+		"IWI",
+		"III"
+	],
+	"key": {
+		"I": "minecraft:iron_ingot",
+		"W": "minecraft:white_wool"
+	},
+	"result": {
+		"count": 1,
+		"id": "cops_robbers:police_cruiser_spawn_egg"
+	}
+}

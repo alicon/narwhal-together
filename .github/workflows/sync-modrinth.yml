@@ -11,6 +11,7 @@ on:
         options:
           - mushroom-the-yorkie
           - narwhal-together
+          - cops-and-robbers
 
 permissions:
   contents: read
@@ -29,4 +30,5 @@ jobs:
           MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
           MODRINTH_PROJECT_ID: ${{ vars.MODRINTH_PROJECT_ID }}
           MUSHROOM_MODRINTH_PROJECT_ID: ${{ vars.MUSHROOM_MODRINTH_PROJECT_ID }}
+          COPS_ROBBERS_MODRINTH_PROJECT_ID: ${{ vars.COPS_ROBBERS_MODRINTH_PROJECT_ID }}
           MODRINTH_MOD: ${{ inputs.mod }}

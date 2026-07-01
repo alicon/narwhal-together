@@ -44,8 +44,22 @@ case "$mod" in
 			"Adventure Companion|docs/media/mushroom-the-yorkie-adventure.png|A small companion for big family worlds.|false|2"
 		)
 		;;
+	cops-and-robbers)
+		project_id="${COPS_ROBBERS_MODRINTH_PROJECT_ID:-cops-and-robbers}"
+		user_agent="alicon/cops-and-robbers (github.com/alicon/minecraft-mods)"
+		body_file="docs/MODRINTH_COPS_AND_ROBBERS.md"
+		icon_file="mods/cops-and-robbers/src/main/resources/assets/cops_robbers/icon.png"
+		title="Cops and Robbers"
+		description="Police cruisers, fire trucks, robbers, banks, and patrol play for family Minecraft worlds."
+		categories='["adventure", "mobs", "game-mechanics"]'
+		license_url="https://github.com/alicon/minecraft-mods/blob/main/LICENSE"
+		source_url="https://github.com/alicon/minecraft-mods"
+		issues_url="https://github.com/alicon/minecraft-mods/issues"
+		stale_gallery_titles=()
+		gallery_specs=()
+		;;
 	*)
-		echo "Unknown MODRINTH_MOD '$mod'. Expected narwhal-together or mushroom-the-yorkie." >&2
+		echo "Unknown MODRINTH_MOD '$mod'. Expected narwhal-together, mushroom-the-yorkie, or cops-and-robbers." >&2
 		exit 2
 		;;
 esac
