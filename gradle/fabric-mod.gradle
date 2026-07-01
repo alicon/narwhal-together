@@ -5,10 +5,11 @@ apply plugin: 'com.modrinth.minotaur'
 def modId = project.ext.mod_id
 def archiveName = project.ext.mod_archive_name
 def displayName = project.ext.mod_display_name
+def modVersion = project.ext.mod_version
 def modrinthProjectEnv = project.ext.modrinth_project_env
 def modrinthProjectFallback = project.ext.modrinth_project_fallback
 def optionalModrinthProjects = project.ext.modrinth_optional_projects
-def changelogFile = rootProject.file("docs/release-notes/${project.name}/${project.mod_version}.md")
+def changelogFile = rootProject.file("docs/release-notes/${project.name}/${modVersion}.md")
 def versionMatrix = project.ext.has('supported_minecraft_versions') ? project.ext.supported_minecraft_versions : [:]
 def requestedMinecraftVersion = project.findProperty('target_minecraft_version')
 if (requestedMinecraftVersion && !versionMatrix.isEmpty() && !versionMatrix.containsKey(requestedMinecraftVersion)) {
@@ -22,8 +23,8 @@ def activeFabricApiVersion = activeVersionConfig.fabric_api_version ?: project.f
 def activeLoaderVersion = activeVersionConfig.loader_version ?: project.loader_version
 def versionedSourceRoot = "src/versions/${activeMinecraftVersion}"
 def publishedVersionNumber = versionMatrix.isEmpty()
-		? project.mod_version
-		: "${project.mod_version}+mc${activeMinecraftVersion}"
+		? modVersion
+		: "${modVersion}+mc${activeMinecraftVersion}"
 def versionedCommonExcludes = project.ext.has('versioned_common_excludes')
 		? project.ext.versioned_common_excludes.get(activeMinecraftVersion, [])
 		: []
@@ -35,7 +36,7 @@ project.ext.active_minecraft_version = activeMinecraftVersion
 project.ext.active_fabric_api_version = activeFabricApiVersion
 project.ext.active_loader_version = activeLoaderVersion
 
-version = project.mod_version
+version = modVersion
 group = project.maven_group
 
 layout.buildDirectory = rootProject.layout.buildDirectory.dir("mods/${project.name}/${activeMinecraftVersion}")

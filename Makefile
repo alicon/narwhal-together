@@ -3,7 +3,7 @@ SHELL := /bin/zsh
 GRADLE := GRADLE_USER_HOME=.gradle-user-home ./gradlew
 MOD ?= cops-and-robbers
 MC_VERSION ?= 1.21.11
-MOD_VERSION := $(shell awk -F= '/^mod_version=/{print $$2}' gradle.properties)
+MOD_VERSION := $(shell awk -F"'" '/mod_version =/{print $$2; exit}' mods/$(MOD)/build.gradle)
 MOD_JAR := build/mods/$(MOD)/$(MC_VERSION)/libs/$(MOD)-$(MOD_VERSION).jar
 MODRINTH_PROFILE ?= $(HOME)/Library/Application Support/ModrinthApp/profiles/Dad’s Minecraft
 LIVE_TEST_MODS_DIR ?= $(or $(MODRINTH_LIVE_TEST_MODS_DIR),$(MODRINTH_PROFILE)/mods)

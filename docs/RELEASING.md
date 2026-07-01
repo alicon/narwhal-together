@@ -73,7 +73,7 @@ Run **Sync Modrinth Metadata** from the repository's Actions tab whenever the na
 ## Publish
 
 1. Complete `docs/TESTING.md` using the exact JAR being released.
-2. Update `mod_version` in `gradle.properties`.
+2. Update `mod_version` in the selected mod's `mods/<mod>/build.gradle`.
 3. Commit and push the release changes.
 4. Open the repository's **Actions** tab.
 5. Run **Publish to Modrinth**, select the mod, and select `alpha`, `beta`, or `release`.
